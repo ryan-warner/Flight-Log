@@ -9,6 +9,7 @@ import {
 import Header from "./Header";
 import Home from "./Home";
 import Test from "./Test";
+import Globe from "./Globe"
 
 //<Header menuState={false} />
 //<Home />
@@ -16,7 +17,7 @@ import Test from "./Test";
 function App() {
   return (
     <div className="bg-transparent text-3xl h-screen w-full overflow-hidden">
-      <Test />
+      <Globe />
     </div>
   );
 }
