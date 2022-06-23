@@ -11,10 +11,14 @@ import Home from "./Home";
 import Test from "./Test";
 import Globe from "./Globe"
 
+import LandformCanvas from "./LandformCanvas"
+
 //<Header menuState={false} />
 //<Home />
 
 function App() {
+  var image = new Image()
+        image.src = "./assets/earthLandmass.png"
   return (
     <div className="bg-transparent text-3xl h-screen w-full overflow-hidden">
       <Globe />
