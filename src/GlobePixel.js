@@ -29,9 +29,11 @@ function GlobePixel(props) {
             props.position[1],
             props.position[2]
             );
-            console.log(dummyEuler._x)
-        pixelRef.current.rotation.set(dummyEuler)
-        //pixelRef.current.rotation.lookAt(0,0,0)
+        pixelRef.current.rotation.set(
+            dummyEuler._x,
+            dummyEuler._y,
+            dummyEuler._z
+            )
         }
     )
 
