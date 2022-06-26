@@ -68,6 +68,12 @@ function gps2cartesian(lat, long) {
     return [xPercentile, yPercentile]
 }
 
+/** function inscribedTransform(lat) {
+
+    I need to draw a picture for this in order to really make it work
+
+} */
+
 function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
     const converted = gps2cartesian(lat, long)
     const relativeX = Math.round(converted[0] * canvasWidth)
@@ -82,10 +88,10 @@ function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
 
 
 function Globe() {
-    const dotDensity = 0.05
+    const dotDensity = 0.025
     const globeRadius = 2
-    const rows = 180
-    const globePixelRadius = 0.015 //(Math.PI * globeRadius) / rows * 0.9
+    const rows = 220 //180
+    const globePixelRadius = 0.007 //(Math.PI * globeRadius) / rows * 0.9
 
     const canvasRef = useRef(null);
     const [landformLoaded, setLandformLoaded] = useState(false)
@@ -109,22 +115,22 @@ function Globe() {
     const frameRef = useRef(null)
 
     return (
-        <div ref={frameRef} className="h-full w-full">
+        <div ref={frameRef} className="h-full w-full bg-gray-600 ">
             <div className="h-0 w-0 overflow-hidden">{landformCanvas}</div>
             <Canvas>
                 
                 <ambientLight />
-                <directionalLight color="purple" castShadow={true} position={[-10, -10, 100]}/>
+                <directionalLight args={[0xffff00,10]} castShadow={true} position={[-5, -5, 6]}/>
                 {globeCamera}
                 <OrbitControls autoRotate={true} args={[globeCamera, frameRef]}/>
                 
                 <mesh position={[0,0,0]} castShadow={true}>
-                    <meshBasicMaterial wireframe={false} color={"rgb(255,255,0)"} />
+                    <meshBasicMaterial roughness={1} wireframe={false} color={0x343c92} />
                     <sphereGeometry args={[globeRadius, 96, 48]} />
                 
                 <Instances limit={500000}>
                     <circleGeometry args={[globePixelRadius,5]} />
-                    <meshPhongMaterial color="rgb(0,0,255)" />
+                    <meshStandardMaterial color="0xffffff" />
                     {pixelsArray}
                 </Instances>
                 </mesh>
