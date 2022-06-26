@@ -73,6 +73,8 @@ function gps2cartesian(lat, long) {
     I need to draw a picture for this in order to really make it work
     Also need to rework below method to average out nearby pixels
 
+    Lights: LHS, top middle, bottom middle, and ambient?
+
 } */
 
 function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
