@@ -1,5 +1,5 @@
 import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
-import earthLandmass from "./assets/earthLandmass.png"
+import earthLandmass from "./assets/map.png"
 
 const LandformCanvas = forwardRef((props, ref) => {
     const [testPixel, setTestPixel] = useState(null)

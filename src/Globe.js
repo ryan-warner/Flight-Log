@@ -71,6 +71,7 @@ function gps2cartesian(lat, long) {
 /** function inscribedTransform(lat) {
 
     I need to draw a picture for this in order to really make it work
+    Also need to rework below method to average out nearby pixels
 
 } */
 
@@ -88,10 +89,10 @@ function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
 
 
 function Globe() {
-    const dotDensity = 0.025
+    const dotDensity = 0.03
     const globeRadius = 2
-    const rows = 220 //180
-    const globePixelRadius = 0.007 //(Math.PI * globeRadius) / rows * 0.9
+    const rows = 270 //180
+    const globePixelRadius = 0.005 //(Math.PI * globeRadius) / rows * 0.9
 
     const canvasRef = useRef(null);
     const [landformLoaded, setLandformLoaded] = useState(false)
