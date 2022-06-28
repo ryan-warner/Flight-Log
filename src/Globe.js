@@ -123,12 +123,16 @@ function Globe() {
             <Canvas>
                 
                 <ambientLight />
-                <directionalLight args={[0xffff00,10]} castShadow={true} position={[-5, -5, 6]}/>
+                <group>
+                    <directionalLight args={[0xffffff,10]} position={[-2, -2, 2]}/>
+                    
+                </group>
                 {globeCamera}
+                <directionalLight args={[0xffffff,10]} position={[-2, -2, 2]}/>
                 <OrbitControls autoRotate={true} args={[globeCamera, frameRef]}/>
                 
                 <mesh position={[0,0,0]} castShadow={true}>
-                    <meshBasicMaterial roughness={1} wireframe={false} color={0x343c92} />
+                    <meshStandardMaterial roughness={1} wireframe={false} color={0x000000} />
                     <sphereGeometry args={[globeRadius, 96, 48]} />
                 
                 <Instances limit={500000}>
