@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { BackSide } from "three"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Instances, OrbitControls, PerspectiveCamera } from "@react-three/drei"
 import GlobePixel from "./GlobePixel"
@@ -112,7 +113,7 @@ function Globe() {
     const frameRef = useRef(null)
     const cameraRef = useRef(null)
     const lightRef = useRef(null)
-    const sceneRef = useRef(null)
+    const haloRef = useRef(null)
 
     var directionalLight1 = <directionalLight ref={lightRef} args={[0xffffff,10]} position={[-2, -2, 2]}/>
     var globeCamera = <perspectiveCamera ref={cameraRef} makeDefault />
@@ -129,33 +130,35 @@ function Globe() {
         if (landformLoaded) {
             setPixelsArray(setupPixels(dotDensity, rows, globeRadius, canvasRef))
         }
-        //const light = lightRef.current
-        //light.position.set([-2,-2,2])
     },[landformLoaded])
 
+    //3E3D6E -- good color
 
     return (
         <div ref={frameRef} className="h-full w-full bg-gray-600 ">
             <div className="h-0 w-0 overflow-hidden">{landformCanvas}</div>
             <Canvas>
                 
-                <ambientLight />
+                
                 <PerspectiveCamera ref={cameraRef} position={[0,0,6]} makeDefault>
                     <group>
-                        <directionalLight ref={lightRef} args={[0x0000ff,8]} position={[-20, -20, 2]}/>
+                        <pointLight ref={lightRef} args={[0x8AABE8,5]} position={[-40, 10, 5]}/>
+                        <directionalLight ref={lightRef} args={[0xC787F1,1]} position={[40, 40, 5]}/>
+                        <directionalLight ref={lightRef} args={[0x87D7F1,0.75]} position={[-2, -10, 5]}/>
+                        <directionalLight ref={lightRef} args={[0x49DDF8,1.2]} position={[-20, 20, 2]}/>
+                        <mesh rotation-x={Math.PI * 0.03} rotation-y={Math.PI * 0.03} position={[0,0,-6.55]}>
+                            <sphereGeometry args={[globeRadius * 1.15, 96, 48, Math.PI ,Math.PI, 0, Math.PI]} />
+                            <meshStandardMaterial side={BackSide} color={0xFFFFFF} />
+                        </mesh>
+
                     </group>
                 </PerspectiveCamera>
                 <directionalLight args={[0xffff00,0]} position={[-2, -2, 2]}/>
-
-               {/**<group>
-                    {globeCamera}
-                </group>*/}
-                
                 
                 <OrbitControls enableZoom={false} autoRotate={true} args={[cameraRef.current, frameRef]}/>
                 
-                <mesh position={[0,0,0]} castShadow={true}>
-                    <meshStandardMaterial emissiveIntensity={1} roughness={1} wireframe={false} color={0x000000} />
+                <mesh position={[0,0,0]}>
+                    <meshStandardMaterial emissiveIntensity={0.75} metalness={0.25} roughness={0.7} color={0x1A174F} />
                     <sphereGeometry args={[globeRadius, 96, 48]} />
                 
                     <Instances limit={500000}>
