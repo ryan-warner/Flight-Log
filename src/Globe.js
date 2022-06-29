@@ -144,8 +144,8 @@ function Globe() {
                     <group>
                         <pointLight ref={lightRef} args={[0x8AABE8,5]} position={[-40, 10, 5]}/>
                         <directionalLight ref={lightRef} args={[0xC787F1,1]} position={[40, 40, 5]}/>
-                        <directionalLight ref={lightRef} args={[0x87D7F1,0.75]} position={[-2, -10, 5]}/>
-                        <directionalLight ref={lightRef} args={[0x49DDF8,1.2]} position={[-20, 20, 2]}/>
+                        <directionalLight ref={lightRef} args={[0x87D7F1,0.75]} position={[-1.5, -10, 5]}/>
+                        <directionalLight ref={lightRef} args={[0x8EE7F8,1.2]} position={[-20, 30, -5.5]}/>
                         <mesh rotation-x={Math.PI * 0.03} rotation-y={Math.PI * 0.03} position={[0,0,-6.55]}>
                             <sphereGeometry args={[globeRadius * 1.15, 96, 48, Math.PI ,Math.PI, 0, Math.PI]} />
                             <meshStandardMaterial side={BackSide} color={0xFFFFFF} />
