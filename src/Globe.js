@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState } from "react";
-import { BackSide, Color } from "three"
 import { Canvas } from '@react-three/fiber'
 import { Instances, OrbitControls, PerspectiveCamera } from "@react-three/drei"
 import GlobePixel from "./GlobePixel"
 import LandformCanvas from "./LandformCanvas";
-//import { HaloShader } from "./HaloShader"
+import HaloShader from "./HaloShader"
+import PixelShader from "./PixelShader"
 
 import { DEG2RAD } from 'three/src/math/MathUtils'
 
@@ -89,12 +89,17 @@ function Globe() {
     const globePixelRadius = 0.005 //(Math.PI * globeRadius) / rows * 0.9
     const sphereZOffset = -6.45
 
-    const canvasRef = useRef(null);
     const [landformLoaded, setLandformLoaded] = useState(false)
     const [pixelsRendered, setPixelsRendered] = useState(false)
     const [sphereLoaded, setSphereLoaded] = useState(false)
     const [sphereRendered, setSphereRendered] = useState(false)
     const [sphereBounds, setSphereBounds] = useState({max: 0, min: 0})
+
+    const canvasRef = useRef(null);
+    const frameRef = useRef(null)
+    const cameraRef = useRef(null)
+    const lightRef = useRef(null)
+    const haloRef = useRef(null)
 
     function onLoadCanvas() {
         setLandformLoaded(true)
@@ -107,52 +112,6 @@ function Globe() {
     const landformCanvas = <LandformCanvas onLoad={onLoadCanvas} loaded={landformLoaded} ref={canvasRef} />
 
     const [pixelsArray, setPixelsArray] = useState(null)
-    // setupPixels(dotDensity, rows, globeRadius, canvasRef)
-
-    const frameRef = useRef(null)
-    const cameraRef = useRef(null)
-    const lightRef = useRef(null)
-    const haloRef = useRef(null)
-
-    const HaloShader = {
-        uniforms: {
-            innerColorInit: {
-                value: new Color(0xDDF5FC)
-            },
-            outerColorInit: {
-                value: new Color(0x3D42EF)
-            },
-            min: {
-                value: sphereBounds.min
-            },
-            max: {
-                value: sphereBounds.max
-            }
-        },
-        vertexShader: `
-        uniform highp float max;
-        uniform highp float min;
-        
-        varying vec2 vUv;
-
-        void main() {
-            vUv.y = abs((position.z - min) / (max - min));
-            vUv.y = pow(vUv.y, 12.0);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-        }`,
-        fragmentShader: `
-        uniform vec3 innerColorInit;
-        uniform vec3 outerColorInit;
-
-        varying vec2 vUv;
-        
-        void main() {
-            vec4 innerColor = vec4(innerColorInit, 1);
-            vec4 outerColor = vec4(outerColorInit, 0);
-            gl_FragColor = vec4(mix(innerColor, outerColor, vUv.y));
-        }`,
-        transparent: true
-      };
 
     useEffect(() => {
         if (landformLoaded && !pixelsRendered) {
@@ -180,8 +139,7 @@ function Globe() {
                         <directionalLight ref={lightRef} args={[0x8EE7F8,1.2]} position={[-20, 30, -5.5]}/>
                         <mesh rotation-x={Math.PI * 0.03} rotation-y={Math.PI * 0.03} position={[0,0,sphereZOffset]}>{/**0,0,-6.55 */}
                             <sphereGeometry onUpdate={onLoadSphere} ref={haloRef} args={[globeRadius * 1.15, 96, 48, Math.PI ,Math.PI, 0, Math.PI]} />
-                            <shaderMaterial side={BackSide} attach="material" args={[HaloShader]}/>
-                            
+                            <HaloShader bounds={sphereBounds} innerColor={0xDDF5FC} outerColor={0x3D42EF} />
                         </mesh>
 
                     </group>
