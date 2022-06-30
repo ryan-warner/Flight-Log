@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { DEG2RAD } from 'three/src/math/MathUtils'
 import { useFrame } from "@react-three/fiber"
 import { Instance } from "@react-three/drei"
 import { Euler, Matrix4 } from "three";
@@ -42,7 +41,7 @@ function GlobePixel(props) {
     }
 
     return (
-        <Instance ref={pixelRef} />
+        <Instance ref={pixelRef}/>
     )
 }
 

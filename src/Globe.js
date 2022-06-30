@@ -85,7 +85,7 @@ function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
 function Globe() {
     const dotDensity = 0.03
     const globeRadius = 2
-    const rows = 270 //180
+    const rows = 200 //180
     const globePixelRadius = 0.005 //(Math.PI * globeRadius) / rows * 0.9
     const sphereZOffset = -6.45
 
@@ -121,7 +121,6 @@ function Globe() {
         if (sphereLoaded && !sphereRendered) {
             haloRef.current.computeBoundingBox()
             const bounds = {max: (haloRef.current.boundingBox.max.z), min: (haloRef.current.boundingBox.min.z)}
-            console.log(bounds)
             setSphereBounds(bounds)
             setSphereRendered(true)
         }
@@ -130,7 +129,7 @@ function Globe() {
     return (
         <div ref={frameRef} className="h-full w-full bg-black ">
             <div className="h-0 w-0 overflow-hidden">{landformCanvas}</div>
-            <Canvas>
+            <Canvas gl={{antialias: false }}>
                 <PerspectiveCamera ref={cameraRef} position={[0,0,6]} makeDefault>{/** 0,0,6 */}
                     <group>
                         <pointLight ref={lightRef} args={[0x64B2F9,5]} position={[-40, 10, 5]}/>
@@ -154,7 +153,8 @@ function Globe() {
                 
                     <Instances limit={500000}>
                         <circleGeometry args={[globePixelRadius,5]} />
-                        <meshStandardMaterial color={0xffffff} />
+                        <PixelShader />
+                        
                         {pixelsArray}
                     </Instances>
                 </mesh>
