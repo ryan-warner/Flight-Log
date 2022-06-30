@@ -87,7 +87,7 @@ function Globe() {
     const globeRadius = 2
     const rows = 270 //180
     const globePixelRadius = 0.005 //(Math.PI * globeRadius) / rows * 0.9
-    const sphereZOffset = -6.4
+    const sphereZOffset = -6.45
 
     const canvasRef = useRef(null);
     const [landformLoaded, setLandformLoaded] = useState(false)
