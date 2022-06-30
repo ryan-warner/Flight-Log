@@ -87,7 +87,7 @@ function Globe() {
     const globeRadius = 2
     const rows = 270 //180
     const globePixelRadius = 0.005 //(Math.PI * globeRadius) / rows * 0.9
-    const sphereZOffset = -6.35
+    const sphereZOffset = -6.4
 
     const canvasRef = useRef(null);
     const [landformLoaded, setLandformLoaded] = useState(false)
@@ -116,11 +116,11 @@ function Globe() {
 
     const HaloShader = {
         uniforms: {
-            color1: {
-                value: new Color(0x15E3FD)
+            innerColorInit: {
+                value: new Color(0xDDF5FC)
             },
-            color2: {
-                value: new Color(0x2096F9)
+            outerColorInit: {
+                value: new Color(0x3D42EF)
             },
             min: {
                 value: sphereBounds.min
@@ -137,18 +137,18 @@ function Globe() {
 
         void main() {
             vUv.y = abs((position.z - min) / (max - min));
-            vUv.y = pow(vUv.y, 7.0);
+            vUv.y = pow(vUv.y, 12.0);
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
         }`,
         fragmentShader: `
-        uniform vec3 color1;
-        uniform vec3 color2;
+        uniform vec3 innerColorInit;
+        uniform vec3 outerColorInit;
 
         varying vec2 vUv;
         
         void main() {
-            vec4 innerColor = vec4(color1, 1);
-            vec4 outerColor = vec4(color2, 0);
+            vec4 innerColor = vec4(innerColorInit, 1);
+            vec4 outerColor = vec4(outerColorInit, 0);
             gl_FragColor = vec4(mix(innerColor, outerColor, vUv.y));
         }`,
         transparent: true
@@ -169,7 +169,7 @@ function Globe() {
     },[landformLoaded, sphereLoaded, sphereRendered, pixelsRendered])
 
     return (
-        <div ref={frameRef} className="h-full w-full bg-gray-600 ">
+        <div ref={frameRef} className="h-full w-full bg-black ">
             <div className="h-0 w-0 overflow-hidden">{landformCanvas}</div>
             <Canvas>
                 <PerspectiveCamera ref={cameraRef} position={[0,0,6]} makeDefault>{/** 0,0,6 */}
