@@ -94,12 +94,16 @@ function Globe() {
     const [sphereLoaded, setSphereLoaded] = useState(false)
     const [sphereRendered, setSphereRendered] = useState(false)
     const [sphereBounds, setSphereBounds] = useState({max: 0, min: 0})
+    const [globeLoaded, setGlobeLoaded] = useState(false)
+    const [globeRendered, setGlobeRendered] = useState(false)
+    const [globeBounds, setGlobeBounds] = useState({max: 0, min: 0})
 
     const canvasRef = useRef(null);
     const frameRef = useRef(null)
     const cameraRef = useRef(null)
     const lightRef = useRef(null)
     const haloRef = useRef(null)
+    const globeRef = useRef(null)
 
     function onLoadCanvas() {
         setLandformLoaded(true)
@@ -107,6 +111,10 @@ function Globe() {
 
     function onLoadSphere() {
        setSphereLoaded(true)
+    }
+
+    function onLoadGlobe() {
+        setGlobeLoaded(true)
     }
 
     const landformCanvas = <LandformCanvas onLoad={onLoadCanvas} loaded={landformLoaded} ref={canvasRef} />
@@ -124,7 +132,14 @@ function Globe() {
             setSphereBounds(bounds)
             setSphereRendered(true)
         }
-    },[landformLoaded, sphereLoaded, sphereRendered, pixelsRendered])
+        if (globeLoaded && !globeRendered) {
+            globeRef.current.computeBoundingBox()
+            const bounds = {max: (globeRef.current.boundingBox.max.z), min: (globeRef.current.boundingBox.min.z)}
+            setGlobeBounds(bounds)
+            console.log(bounds)
+            setGlobeRendered(true)
+        }
+    },[landformLoaded, sphereLoaded, sphereRendered, pixelsRendered, globeLoaded, globeRendered])
 
     return (
         <div ref={frameRef} className="h-full w-full bg-black ">
@@ -149,11 +164,11 @@ function Globe() {
 
                 <mesh position={[0,0,0]}>
                     <meshStandardMaterial emissiveIntensity={0.75} metalness={0} roughness={0.75} color={0x1A174F} />
-                    <sphereGeometry args={[globeRadius, 96, 48]} />
+                    <sphereGeometry onUpdate={onLoadGlobe} ref={globeRef} args={[globeRadius, 96, 48]} />
                 
                     <Instances limit={500000}>
                         <circleGeometry args={[globePixelRadius,5]} />
-                        <PixelShader />
+                        <PixelShader bounds={globeBounds} />
                         
                         {pixelsArray}
                     </Instances>
