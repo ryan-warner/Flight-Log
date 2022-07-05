@@ -1,10 +1,11 @@
 import { useRef, useEffect, useState } from "react";
 import { Canvas } from '@react-three/fiber'
-import { Instances, OrbitControls, PerspectiveCamera } from "@react-three/drei"
+import { Instances, OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei"
 import GlobePixel from "./GlobePixel"
 import LandformCanvas from "./LandformCanvas";
 import HaloShader from "./HaloShader"
 import PixelShader from "./PixelShader"
+import FlightPath from "./FlightPath"
 
 import { DEG2RAD } from 'three/src/math/MathUtils'
 
@@ -91,7 +92,7 @@ function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
         pixelAlpha = pixelAlpha + data[i] * weights[i]
     }
 
-    if (pixelAlpha > 0.6) {
+    if (pixelAlpha > 0.65) {
         return true;
     } else {
         if ((long < -120 || long > 120) && (lat < 45 || lat > -45) && pixelAlpha > 0.35) {
@@ -158,6 +159,7 @@ function Globe() {
                         <directionalLight ref={lightRef} args={[0xC787F1,1]} position={[40, 40, 5]}/>
                         <directionalLight ref={lightRef} args={[0x87D7F1,0.75]} position={[-1.5, -10, 5]}/>
                         <directionalLight ref={lightRef} args={[0x8EE7F8,1.2]} position={[-20, 30, -5.5]}/>
+                        <Stars radius={100} depth={50} count={1500} factor={4} saturation={0} fade speed={1} />
                         <mesh rotation-x={Math.PI * 0.03} rotation-y={Math.PI * 0.03} position={[0,0,sphereZOffset]}>{/**0,0,-6.55 */}
                             <sphereGeometry onUpdate={onLoadSphere} ref={haloRef} args={[globeRadius * 1.15, 96, 48, Math.PI ,Math.PI, 0, Math.PI]} />
                             <HaloShader bounds={sphereBounds} innerColor={0xDDF5FC} outerColor={0x3D42EF} />
@@ -165,6 +167,23 @@ function Globe() {
 
                     </group>
                 </PerspectiveCamera>
+                
+                <FlightPath 
+                    startLat={27.9506}
+                    startLong={-82.4572}
+                    endLat={33.7490}
+                    endLong={-84.3880}
+                    small={true}
+                />
+
+                <FlightPath 
+                    startLat={33.7490}
+                    startLong={-84.3880}
+                    endLat={50.1109}
+                    endLong={8.6821}
+                    small={false}
+                />
+
                 <directionalLight args={[0xffff00,0]} position={[-2, -2, 2]}/>
                 
                 <OrbitControls enableZoom={false} autoRotate={false} args={[cameraRef.current, frameRef]}/>
