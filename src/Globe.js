@@ -9,12 +9,11 @@ import FlightPath from "./FlightPath"
 
 import { DEG2RAD } from 'three/src/math/MathUtils'
 
-// What this needs
+// TO DO
 
-// Function -- pixel density and functions to break off photo into regions to send as props to pixel
-
-// halo behind
-// Start working on arcs, points, etc...
+// Animate arcs
+// Add dots when arc is present
+// Animate dot on landing -- should be a state thing
 
 // Maybe later make a cool shooting/pulsing star background!
 
