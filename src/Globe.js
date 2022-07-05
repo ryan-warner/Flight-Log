@@ -94,7 +94,7 @@ function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
     if (pixelAlpha > 0.6) {
         return true;
     } else {
-        if ((long < -120 || long > 120) && (lat < 45 || lat > -45) && pixelAlpha > 0.35 ) {
+        if ((long < -120 || long > 120) && (lat < 45 || lat > -45) && pixelAlpha > 0.35) {
             return true;
         } else {
             return false;
