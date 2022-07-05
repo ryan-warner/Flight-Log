@@ -60,26 +60,38 @@ function gps2cartesian(lat, long) {
     return [xPercentile, yPercentile]
 }
 
-/** function inscribedTransform(lat) {
-
-    I need to draw a picture for this in order to really make it work
-    Also need to rework below method to average out nearby pixels
-
-    Lights: LHS, top middle, bottom middle, and bottom leftish
-
-} */
-
 function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
     const converted = gps2cartesian(lat, long)
     const relativeX = Math.round(converted[0] * canvasWidth)
     const relativeY = Math.round(converted[1] * canvasHeight)
-    const pixelWeight = 1 - Math.abs(converted[0] * canvasWidth - relativeX)
-    const roundedUp = pixelWeight > 0.5 ? true : false
-    const firstPoint = canvasRef.current.getContext("2d").getImageData(relativeX,relativeY,1,1).data[3]
-    const secondPoint = canvasRef.current.getContext("2d").getImageData(roundedUp ? relativeX - 1: relativeX + 1, relativeY,1,1).data[3]
-    const pixelAlpha = (firstPoint * pixelWeight + secondPoint * (1 - pixelWeight)) / 255
-    
-    if (pixelAlpha > 0.8) {
+    const horizontalWeight = 1 - Math.abs(converted[0] * canvasWidth - relativeX)
+    const verticalWeight = 1 - Math.abs(converted[1] * canvasHeight - relativeY)
+
+    const roundedRight = horizontalWeight > 0.5 ? true : false
+    const roundedUp = verticalWeight > 0.5 ? true : false
+
+    const startX = roundedRight ? relativeX - 1 : relativeX
+    const startY = roundedUp ? relativeY - 1 : relativeY
+
+    const weights = 
+        [
+            (startX === relativeX ? horizontalWeight : 1 - horizontalWeight) * (startY === relativeY ? verticalWeight : 1 - verticalWeight),
+            (startX + 1 === relativeX ? horizontalWeight : 1 -  horizontalWeight) * (startY === relativeY ? verticalWeight : 1 - verticalWeight),
+            (startX === relativeX ? horizontalWeight : 1 - horizontalWeight) * (startY + 1 === relativeY ? verticalWeight : 1 - verticalWeight),
+            (startX + 1 === relativeX ? horizontalWeight : 1 - horizontalWeight) * (startY + 1 === relativeY ? verticalWeight : 1 - verticalWeight)  
+        ]
+
+    var data = canvasRef.current.getContext("2d").getImageData(startX,startY,2,2).data
+    data = [data[3], data[7], data[11], data[15]]
+    data = data.map(point => point  / 255)
+
+    var pixelAlpha = 0
+
+    for (let i = 0; i < data.length; i++) {
+        pixelAlpha = pixelAlpha + data[i] * weights[i]
+    }
+
+    if (pixelAlpha > 0.45) {
         return true;
     } else {
         return false;
