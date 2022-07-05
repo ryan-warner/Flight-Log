@@ -4,12 +4,6 @@ function PixelShader(props) {
 
     const PixelShader = {
         uniforms: {
-            min: {
-                value: props.bounds.min
-            },
-            max: {
-                value: props.bounds.max
-            },
             fadeThreshold: {
                 value: 0.978
             },
@@ -17,7 +11,7 @@ function PixelShader(props) {
                 value: 400
             },
             pixelColor: {
-                value: new Color(0xFFFFFF)
+                value: new Color(0xD6D2DE)
             }
         },
         vertexShader: `

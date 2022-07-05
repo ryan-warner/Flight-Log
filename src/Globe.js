@@ -73,8 +73,13 @@ function isPixelVisible(lat, long, rows, canvasRef, canvasHeight, canvasWidth) {
     const converted = gps2cartesian(lat, long)
     const relativeX = Math.round(converted[0] * canvasWidth)
     const relativeY = Math.round(converted[1] * canvasHeight)
-    const pixelData = canvasRef.current.getContext("2d").getImageData(relativeX,relativeY,1,1).data[3]
-    if (pixelData === 255) {
+    const pixelWeight = 1 - Math.abs(converted[0] * canvasWidth - relativeX)
+    const roundedUp = pixelWeight > 0.5 ? true : false
+    const firstPoint = canvasRef.current.getContext("2d").getImageData(relativeX,relativeY,1,1).data[3]
+    const secondPoint = canvasRef.current.getContext("2d").getImageData(roundedUp ? relativeX - 1: relativeX + 1, relativeY,1,1).data[3]
+    const pixelAlpha = (firstPoint * pixelWeight + secondPoint * (1 - pixelWeight)) / 255
+    
+    if (pixelAlpha > 0.8) {
         return true;
     } else {
         return false;
@@ -86,7 +91,7 @@ function Globe() {
     const dotDensity = 0.03
     const globeRadius = 2
     const rows = 200 //180
-    const globePixelRadius = 0.005 //(Math.PI * globeRadius) / rows * 0.9
+    const globePixelRadius = 0.006 //(Math.PI * globeRadius) / rows * 0.9
     const sphereZOffset = -6.45
 
     const [landformLoaded, setLandformLoaded] = useState(false)
@@ -94,9 +99,6 @@ function Globe() {
     const [sphereLoaded, setSphereLoaded] = useState(false)
     const [sphereRendered, setSphereRendered] = useState(false)
     const [sphereBounds, setSphereBounds] = useState({max: 0, min: 0})
-    const [globeLoaded, setGlobeLoaded] = useState(false)
-    const [globeRendered, setGlobeRendered] = useState(false)
-    const [globeBounds, setGlobeBounds] = useState({max: 0, min: 0})
 
     const canvasRef = useRef(null);
     const frameRef = useRef(null)
@@ -111,10 +113,6 @@ function Globe() {
 
     function onLoadSphere() {
        setSphereLoaded(true)
-    }
-
-    function onLoadGlobe() {
-        setGlobeLoaded(true)
     }
 
     const landformCanvas = <LandformCanvas onLoad={onLoadCanvas} loaded={landformLoaded} ref={canvasRef} />
@@ -132,14 +130,7 @@ function Globe() {
             setSphereBounds(bounds)
             setSphereRendered(true)
         }
-        if (globeLoaded && !globeRendered) {
-            globeRef.current.computeBoundingBox()
-            const bounds = {max: (globeRef.current.boundingBox.max.z), min: (globeRef.current.boundingBox.min.z)}
-            setGlobeBounds(bounds)
-            console.log(bounds)
-            setGlobeRendered(true)
-        }
-    },[landformLoaded, sphereLoaded, sphereRendered, pixelsRendered, globeLoaded, globeRendered])
+    },[landformLoaded, sphereLoaded, sphereRendered, pixelsRendered])
 
     return (
         <div ref={frameRef} className="h-full w-full bg-black ">
@@ -164,11 +155,11 @@ function Globe() {
 
                 <mesh position={[0,0,0]}>
                     <meshStandardMaterial emissiveIntensity={0.75} metalness={0} roughness={0.75} color={0x1A174F} />
-                    <sphereGeometry onUpdate={onLoadGlobe} ref={globeRef} args={[globeRadius, 96, 48]} />
+                    <sphereGeometry ref={globeRef} args={[globeRadius, 96, 48]} />
                 
                     <Instances limit={500000}>
                         <circleGeometry args={[globePixelRadius,5]} />
-                        <PixelShader bounds={globeBounds} />
+                        <PixelShader />
                         
                         {pixelsArray}
                     </Instances>
